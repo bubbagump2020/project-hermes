@@ -16,7 +16,7 @@ class UsersController < ApplicationController
     end
 
     def show
-        user = User.find_by_username(params[:username])
+        user = User.find(params[:id])
         if user
             render json: user
         else
@@ -24,8 +24,22 @@ class UsersController < ApplicationController
         end
     end
 
+    def update
+        user = User.exists?(params[:id])
+        if user
+            user = User.find(params[:id])
+            if user.update(user_params)
+                render json: user
+            else
+                render json: "Failed to update user"
+            end
+        else
+            render json: "User Not found"
+        end
+    end
+
     def destroy
-        user = User.find_by_username(params[:username])
+        user = User.find(params[:id])
         user.destroy
         render json: { message: "User deleted" }
     end
@@ -33,6 +47,6 @@ class UsersController < ApplicationController
     private
 
     def user_params
-        params.require(:user).permit(:username, :email, :password_digest)
+        params.permit(:username, :email, :password_digest)
     end
 end
