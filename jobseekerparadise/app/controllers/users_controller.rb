@@ -15,9 +15,18 @@ class UsersController < ApplicationController
         end
     end
 
+    def show
+        user = User.find_by_username(params[:username])
+        if user
+            render json: user
+        else
+            render json: { mesage: "User does not exist" }
+        end
+    end
+
     private
 
     def user_params
-        params.require(:user).permit(:username, :email, :password)
+        params.require(:user).permit(:username, :email, :password_digest)
     end
 end
