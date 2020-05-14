@@ -5,15 +5,15 @@ import Col from 'react-bootstrap/Col'
 import CreateUser from './CreateUser'
 import Login from './Login'
 
-const SplashPage = () => {
+const SplashPage = (props) => {
     return(
         <Container>
             <Row>
                 <Col>
-                    <CreateUser />
+                    <CreateUser props={props}/>
                 </Col>
                 <Col>
-                    <Login />
+                    <Login props={props}/>
                 </Col>
             </Row>
             <h6 style={{textAlign: "center"}}>Created By Kevin Bagnall, May 2020</h6>

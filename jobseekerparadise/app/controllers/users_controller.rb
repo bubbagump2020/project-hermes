@@ -9,9 +9,9 @@ class UsersController < ApplicationController
         if (user.save)
             # Payload 
             # Token
-            render json: { user: user, created?: true}
+            render json: { user: user, success: true, username: user.username }
         else
-            render json: { message: "User not created", created?: false}
+            render json: { message: "User not created", success: false, error: user.errors.full_messages }
         end
     end
 

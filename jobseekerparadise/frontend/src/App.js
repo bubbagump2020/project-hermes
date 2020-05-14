@@ -5,15 +5,13 @@ import {
   Route,
 } from 'react-router-dom'
 import SplashPage from './components/Splash/SplashPage';
+import Home from './components/User/Home'
 
 function App() {
   return (
     <Router>
-      <Switch>
-        <Route path="/">
-          <SplashPage />
-        </Route>
-      </Switch>
+        <Route exact path="/" component={SplashPage}/>
+        <Route exact path="/:username" component={Home} />
     </Router>
   );
 }

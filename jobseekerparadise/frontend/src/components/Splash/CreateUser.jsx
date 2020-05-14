@@ -2,15 +2,18 @@ import React from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Jumbotron from 'react-bootstrap/Jumbotron'
+import Alert from 'react-bootstrap/Alert'
 import { ROOT_URL } from '../../TopLevelConstants'
 
-const CreateUser = () => {
+const CreateUser = (props) => {
 
     const [newUser, setNewUser] = React.useState({
         username: null,
         email: null,
         password_digest: null
     })
+
+    const history = props.props.history
 
     const handleChange = (e) => {
         e.preventDefault()
@@ -40,22 +43,35 @@ const CreateUser = () => {
         })
     }
 
+    const handleErrors = (errors) => {
+        if (errors !== undefined ){
+            return errors.map(warning => {
+                return(
+                    <Alert key={warning} variant="warning">
+                        Sorry that {warning.toLowerCase()}
+                    </Alert>
+                )
+            })
+        }
+    }
 
-    const handleSubmit =  (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log(e.target)
-        fetch(`${ROOT_URL}/users`)
-        .then(response => response.json())
-        .then(data => console.log(data))
-        fetch(`http://localhost:3001/users`, data)
-        .then(response => response.json())
-        .then(data => console.log(data))
-
+        const newUserResponse = await fetch(`${ROOT_URL}/users`, data)
+        const newUserData = await newUserResponse.json()
+        setNewUser(newUserData)
+        console.log(newUserData)
+        if (newUserData.success) {
+            
+            history.push(`/${newUserData.username}`)
+            console.log(history)
+        }
     }
 
     return(
         <Jumbotron>
             <h2>Join The Family!</h2>
+            {handleErrors(newUser.error)}
             <Form onSubmit={handleSubmit}>
                 <Form.Text>We're happy to have you!</Form.Text>
                 <br></br>
@@ -74,7 +90,7 @@ const CreateUser = () => {
                 <Button variant="primary" type="submit">
                     Submit
                 </Button>
-            </Form>
+            </Form><br></br>
         </Jumbotron>
     )
 }
