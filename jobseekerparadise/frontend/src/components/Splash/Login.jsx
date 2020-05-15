@@ -2,7 +2,18 @@ import React from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Jumbotron from 'react-bootstrap/Jumbotron'
+import { ROOT_URL } from '../../TopLevelConstants'
 const Login = () => {
+
+    const [user, setUser] = React.useState({
+        email: null,
+        password_digest: null
+    })
+
+    const handleSubmit = async () => {
+        const userResponse = await fetch(`${ROOT_URL}`)
+    }
+
     return(
         <Jumbotron>
             <h2>Welcome Back!</h2>

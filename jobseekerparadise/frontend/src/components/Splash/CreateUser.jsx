@@ -60,11 +60,9 @@ const CreateUser = (props) => {
         const newUserResponse = await fetch(`${ROOT_URL}/users`, data)
         const newUserData = await newUserResponse.json()
         setNewUser(newUserData)
-        console.log(newUserData)
+
         if (newUserData.success) {
-            
             history.push(`/${newUserData.username}`)
-            console.log(history)
         }
     }
 
