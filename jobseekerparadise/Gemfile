@@ -17,7 +17,8 @@ gem 'puma', '~> 4.1'
 gem 'bcrypt', '~> 3.1.7'
 # Use JWT for token authentication
 gem 'jwt'
-
+gem 'pry'
+gem 'pry-rails', :group => :development
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
