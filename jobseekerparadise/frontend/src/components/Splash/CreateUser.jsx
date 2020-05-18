@@ -10,7 +10,7 @@ const CreateUser = (props) => {
     const [newUser, setNewUser] = React.useState({
         username: null,
         email: null,
-        password_digest: null
+        password: null
     })
 
     const history = props.props.history
@@ -25,7 +25,7 @@ const CreateUser = (props) => {
                 setNewUser({ ...newUser, username: e.target.value })
                 break;
             default:
-                setNewUser({ ...newUser, password_digest: e.target.value})
+                setNewUser({ ...newUser, password: e.target.value})
         }
 
     }
@@ -39,7 +39,7 @@ const CreateUser = (props) => {
         body: JSON.stringify({
             username: newUser.username,
             email: newUser.email,
-            password_digest: newUser.password_digest
+            password: newUser.password
         })
     }
 

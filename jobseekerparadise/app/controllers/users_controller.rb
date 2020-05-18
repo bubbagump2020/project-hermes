@@ -1,15 +1,11 @@
 class UsersController < ApplicationController
-    def index
-        users = User.all
-        render json: users
-    end
 
     def create
         user = User.new(user_params)
         if (user.save)
-            # Payload 
-            # Token
-            render json: { user: user, success: true, username: user.username }
+            # payload = { user_id: user.id }
+            # token = encode_token(payload)
+            render json: { user: user, success: true }
         else
             render json: { message: "User not created", success: false, error: user.errors.full_messages }
         end
@@ -47,6 +43,6 @@ class UsersController < ApplicationController
     private
 
     def user_params
-        params.permit(:username, :email, :password_digest)
+        params.permit(:username, :email, :password)
     end
 end
