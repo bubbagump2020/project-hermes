@@ -3,8 +3,8 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Jumbotron from 'react-bootstrap/Jumbotron'
 import { ROOT_URL } from '../../TopLevelConstants'
-import Alert from 'react-bootstrap/Alert'
-import Toast from 'react-bootstrap/Toast'
+// import Alert from 'react-bootstrap/Alert'
+// import Toast from 'react-bootstrap/Toast'
 
 
 const Login = (props) => {
@@ -37,23 +37,28 @@ const Login = (props) => {
         }
     }
 
+    // Current implementation of token authentication requires user input (ex. logout button) to flush localStorage of the token
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         const userResponse = await fetch(`${ROOT_URL}/login`, data)
         const userData = await userResponse.json()
-        console.log(userData)
         if (userData.success){
             localStorage.setItem('token', userData.jwt)
             props.props.history.push(`/${userData.user.username}`)
         }
     }
 
+    // const checkLocalStorage = () => {
+    //     if (localStorage.getItem('token') !== null){
+    //         localStorage.removeItem('token')
+    //     }
+    // }
+
     return(
         <Jumbotron>
             <h2>Welcome Back!</h2>
             <Form onSubmit={handleSubmit}>
-                {/* {handleSuccess(user)} */}
                 <br></br>
                 <Form.Group>
                     <Form.Label>Username</Form.Label>

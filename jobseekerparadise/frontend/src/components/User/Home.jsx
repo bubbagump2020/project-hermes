@@ -1,10 +1,26 @@
 import React from 'react'
 import Container from 'react-bootstrap/Container'
+import SiteNavbar from '../SiteWide/SiteNavbar'
 
-const Home = () => {
+const Home = (props) => {
+
+    const currentUser = props.match.params.username
+    const currentUserURI = props.location.pathname
+
+    // console.log(props)
+
     return(
         <Container>
-            <h1>User Home Page</h1>
+            <SiteNavbar currentUser={currentUser} path={currentUserURI} />
+            <div>
+                Job seekers news component?
+            </div>
+            <div>
+                Welcome back message component?
+            </div>
+            <div>
+                Search bar component?
+            </div>
         </Container>
     )
 }
