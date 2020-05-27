@@ -6,7 +6,10 @@ class AuthenticationsController < ApplicationController
             payload = { user_id: @user.id }
             token = encode_token(payload)
             render json: {
-                user: @user,
+                user_id: @user.id,
+                username: @user.username,
+                email: @user.email,
+                password: @user.password_digest,
                 success: true,
                 jwt: token,
                 message: "Welcome back #{@user.username}"

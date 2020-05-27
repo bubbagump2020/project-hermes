@@ -5,6 +5,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron'
 import { ROOT_URL } from '../../TopLevelConstants'
 import { userName, userLogin, userPassword } from '../../redux/actions/userActions'
 import { useDispatch, useSelector } from 'react-redux'
+import {persistor} from '../../redux/store'
 // import Alert from 'react-bootstrap/Alert'
 // import Toast from 'react-bootstrap/Toast'
 
@@ -12,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux'
 const Login = (props) => {
 
     const dispatch = useDispatch()
-    const {user} = useSelector(state =>({ user: state.userReducer.user }))
+    const {user} = useSelector(state =>({ user: state.userReducer }))
 
     let data = {
         method: "POST",
@@ -25,17 +26,6 @@ const Login = (props) => {
         })
     }
 
-    const handleChange = (e) => {
-        // e.preventDefault()
-        // switch(e.currentTarget.placeholder){
-        //     case "Username":
-        //         setUser({ ...user, username: e.target.value })
-        //         break;
-        //     default:
-        //         setUser({ ...user, password: e.target.value })
-        // }
-    }
-
     // Current implementation of token authentication requires user input (ex. logout button) to flush localStorage of the token
 
     const handleSubmit = async (e) => {
@@ -43,16 +33,12 @@ const Login = (props) => {
         const userResponse = await fetch(`${ROOT_URL}/login`, data)
         const userData = await userResponse.json()
         if (userData.success){
+            console.log(userData)
+            dispatch(userLogin(userData))
             localStorage.setItem('token', userData.jwt)
-            props.props.history.push(`/${userData.user.username}`)
+            props.props.history.push(`/${userData.username}`)
         }
     }
-
-    // const checkLocalStorage = () => {
-    //     if (localStorage.getItem('token') !== null){
-    //         localStorage.removeItem('token')
-    //     }
-    // }
 
     return(
         <Jumbotron>

@@ -1,13 +1,7 @@
 import { userActions } from '../action-types/index'
 
 const initialState = {
-    user: {
-        username: null,
-        email: null,
-        password: null,
-        success: null
-    },
-    token: null
+
 }
 
 export const userReducer = (state = initialState, action) => {
@@ -15,18 +9,21 @@ export const userReducer = (state = initialState, action) => {
         case userActions.USERNAME:
             return{
                 ...state,
-                user: {
-                    ...state.user,
-                    username: action.payload
-                }
+                username: action.payload
             }
         case userActions.PASSWORD:
             return{
                 ...state,
-                user: {
-                    ...state.user,
-                    password: action.payload
-                }
+                password: action.payload
+            }
+        case userActions.EMAIL:
+            return{
+                ...state,
+                email: action.payload
+            }
+        case userActions.LOGIN:
+            return{
+                user: action.payload
             }
         default:
             return state

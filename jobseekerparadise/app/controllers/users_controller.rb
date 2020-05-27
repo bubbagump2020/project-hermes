@@ -3,9 +3,16 @@ class UsersController < ApplicationController
     def create
         user = User.new(user_params)
         if (user.save)
-            # payload = { user_id: user.id }
-            # token = encode_token(payload)
-            render json: { user: user, success: true }
+            payload = { user_id: user.id }
+            token = encode_token(payload)
+            render json: {
+                user_id: user.id,
+                username: user.username,
+                email: user.email,
+                password: user.password_digest,
+                success: true,
+                jwt: token,
+            }
         else
             render json: { message: "User not created", success: false, error: user.errors.full_messages }
         end
@@ -16,7 +23,7 @@ class UsersController < ApplicationController
         if user
             render json: user
         else
-            render json: { mesage: "User does not exist" }
+            render json: { message: "User does not exist" }
         end
     end
 
