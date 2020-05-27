@@ -7,14 +7,25 @@ import PrivateRoute from './components/Splash/PrivateRoute'
 import SplashPage from './components/Splash/SplashPage';
 import Home from './components/User/Home'
 import Profile from './components/User/Profile'
+import { AuthContext } from './context/aut'
 
 function App() {
+  const existingTokens = JSON.parse(localStorage.getItem('tokens'))
+  const [authTokens, setAuthTokens] = React.useState(existingTokens)
+
+  const setTokens = (data) => {
+    localStorage.setItem("tokens", JSON.stringify(data))
+    setAuthTokens(data)
+  }
+
   return (
-    <Router>
+    <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+      <Router>
         <Route exact path="/" component={SplashPage}/>
         <PrivateRoute exact path="/:username" component={Home} />
         <PrivateRoute exact path="/:username/profile" component={Profile} />
-    </Router>
+      </Router>
+    </AuthContext.Provider>
   );
 }
 

@@ -5,7 +5,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron'
 import { ROOT_URL } from '../../TopLevelConstants'
 import { userName, userLogin, userPassword } from '../../redux/actions/userActions'
 import { useDispatch, useSelector } from 'react-redux'
-import {persistor} from '../../redux/store'
+import { useAuth } from '../../context/aut'
 // import Alert from 'react-bootstrap/Alert'
 // import Toast from 'react-bootstrap/Toast'
 
@@ -14,6 +14,7 @@ const Login = (props) => {
 
     const dispatch = useDispatch()
     const {user} = useSelector(state =>({ user: state.userReducer }))
+    const { setAuthTokens } = useAuth()
 
     let data = {
         method: "POST",
@@ -33,9 +34,9 @@ const Login = (props) => {
         const userResponse = await fetch(`${ROOT_URL}/login`, data)
         const userData = await userResponse.json()
         if (userData.success){
-            console.log(userData)
             dispatch(userLogin(userData))
             localStorage.setItem('token', userData.jwt)
+            // setAuthTokens(userData.jwt)
             props.props.history.push(`/${userData.username}`)
         }
     }

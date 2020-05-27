@@ -9,29 +9,9 @@ import { userName, userEmail, userPassword, userLogin } from '../../redux/action
 
 const CreateUser = (props) => {
 
-    // const [newUser, setNewUser] = React.useState({
-    //     username: null,
-    //     email: null,
-    //     password: null
-    // })
-
     const { newUser } = useSelector(state => ({ newUser: state.userReducer }))
     const history = props.props.history
     const dispatch = useDispatch()
-
-    // const handleChange = (e) => {
-    //     e.preventDefault()
-    //     switch(e.currentTarget.placeholder){
-    //         case "Email":
-    //             setNewUser({ ...newUser, email: e.target.value })
-    //             break;
-    //         case "Username":
-    //             setNewUser({ ...newUser, username: e.target.value })
-    //             break;
-    //         default:
-    //             setNewUser({ ...newUser, password: e.target.value})
-    //     }
-    // }
 
     let data = {
         method: 'POST',
@@ -64,6 +44,7 @@ const CreateUser = (props) => {
         const newUserData = await newUserResponse.json()
         dispatch(userLogin(newUserData))
         if (newUserData.success) {
+            localStorage.setItem('token', newUserData.jwt)
             history.push(`/${newUserData.username}`)
         }
     }
