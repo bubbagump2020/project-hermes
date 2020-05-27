@@ -3,17 +3,16 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Jumbotron from 'react-bootstrap/Jumbotron'
 import { ROOT_URL } from '../../TopLevelConstants'
+import { userName, userLogin, userPassword } from '../../redux/actions/userActions'
+import { useDispatch, useSelector } from 'react-redux'
 // import Alert from 'react-bootstrap/Alert'
 // import Toast from 'react-bootstrap/Toast'
 
 
 const Login = (props) => {
 
-    const [user, setUser] = React.useState({
-        username: null,
-        password: null,
-        success: null
-    })
+    const dispatch = useDispatch()
+    const {user} = useSelector(state =>({ user: state.userReducer.user }))
 
     let data = {
         method: "POST",
@@ -27,14 +26,14 @@ const Login = (props) => {
     }
 
     const handleChange = (e) => {
-        e.preventDefault()
-        switch(e.currentTarget.placeholder){
-            case "Username":
-                setUser({ ...user, username: e.target.value })
-                break;
-            default:
-                setUser({ ...user, password: e.target.value })
-        }
+        // e.preventDefault()
+        // switch(e.currentTarget.placeholder){
+        //     case "Username":
+        //         setUser({ ...user, username: e.target.value })
+        //         break;
+        //     default:
+        //         setUser({ ...user, password: e.target.value })
+        // }
     }
 
     // Current implementation of token authentication requires user input (ex. logout button) to flush localStorage of the token
@@ -62,11 +61,11 @@ const Login = (props) => {
                 <br></br>
                 <Form.Group>
                     <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" placeholder="Username" onChange={handleChange}/>               
+                    <Form.Control type="text" placeholder="Username" onChange={e => dispatch(userName(e.target.value))} />
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password" onChange={handleChange}/>
+                    <Form.Control type="password" placeholder="Password" onChange={e=> dispatch(userPassword(e.target.value))} />
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     Submit
