@@ -25,7 +25,6 @@ function App() {
       <Router>
         <Route exact path="/" component={SplashPage}/>
         <PrivateRoute exact path="/:username" component={Home} />
-        <PrivateRoute exact path="/:username/profile" component={Profile} />
       </Router>
     </AuthContext.Provider>
   );

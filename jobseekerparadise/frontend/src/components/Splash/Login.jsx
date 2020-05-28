@@ -1,74 +1,38 @@
 import React from 'react'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Jumbotron from 'react-bootstrap/Jumbotron'
+import { post } from 'axios'
 import { ROOT_URL } from '../../TopLevelConstants'
-import { Redirect, withRouter } from 'react-router-dom'
-import { userName, userLogin, userPassword } from '../../redux/actions/userActions'
-import { useDispatch, useSelector } from 'react-redux'
-import { useAuth } from '../../context/aut'
-// import Alert from 'react-bootstrap/Alert'
-// import Toast from 'react-bootstrap/Toast'
 
 
 const Login = (props) => {
 
-    const dispatch = useDispatch()
-    const {user} = useSelector(state =>({ user: state.userReducer.user }))
-    const { loginDetails } = useSelector(state => ({ loginDetails: state.userReducer}))
-    const [isLoggedIn, setLoggedIn] = React.useState(false)
-    const { setAuthTokens } = useAuth()
+    const [user, setUser] = React.useState({
+        email: null,
+        password: null
+    })
 
-    let data = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username: loginDetails.username,
-            password: loginDetails.password
-        })
-    }
-
-    // Current implementation of token authentication requires user input (ex. logout button) to flush localStorage of the token
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        const userResponse = await fetch(`${ROOT_URL}/login`, data)
-        const userData = await userResponse.json()
-        if (userData.success){
-            dispatch(userLogin(userData))
-            const token = userData
-            localStorage.setItem('loginToken', token.jwt)
-            setAuthTokens(token)
-            setLoggedIn(true)
-        } else {
-            console.log(userData.message)
-        }
-    }
-
-    if (isLoggedIn){
-        return <Redirect to={`/${user.username}`} />
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+        const request = { "auth": {"email": user.email, "password": user.password}}
+        const response = await post(`${ROOT_URL}/api/user_token`, request)
+        console.log(response)
     }
 
     return(
-        <Jumbotron>
-            <h2>Welcome Back!</h2>
-            <Form onSubmit={handleSubmit}>
-                <br></br>
-                <Form.Group>
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" placeholder="Username" onChange={e => dispatch(userName(e.target.value))} />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password" onChange={e=> dispatch(userPassword(e.target.value))} />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form>
-        </Jumbotron>
+        <div className="jumbotron">
+            <h2>Login!</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="email">Email: </label>
+                    <input name="email" id="email" type="email" className="form-control" onChange={e => setUser({ ...user, email: e.target.value })}/>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input name="password" id="password" type="password" className="form-control" onChange={e => setUser({ ...user, password: e.target.value})}/>
+                </div>
+                <button type="submit" className="btn btn-dark">Submit</button>
+            </form>
+        </div>
     )
 }
 
-export default withRouter(Login)
+export default Login
