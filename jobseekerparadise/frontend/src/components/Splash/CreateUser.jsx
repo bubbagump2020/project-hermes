@@ -10,6 +10,8 @@ import { userName, userEmail, userPassword, userLogin } from '../../redux/action
 const CreateUser = (props) => {
 
     const { newUser } = useSelector(state => ({ newUser: state.userReducer }))
+    const [isLoggedIn, setLoggedIn] = React.useState(false)
+    const [isError, setIsError] = React.useState(false)
     const history = props.props.history
     const dispatch = useDispatch()
 
@@ -41,11 +43,13 @@ const CreateUser = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         const newUserResponse = await fetch(`${ROOT_URL}/users`, data)
+        console.log(newUserResponse)
         const newUserData = await newUserResponse.json()
         dispatch(userLogin(newUserData))
         if (newUserData.success) {
-            localStorage.setItem('token', newUserData.jwt)
-            history.push(`/${newUserData.username}`)
+            console.log('success!')
+            // localStorage.setItem('token', newUserData.jwt)
+            // history.push(`/${newUserData.username}`)
         }
     }
 

@@ -7,7 +7,7 @@ const Home = (props) => {
     const currentUser = props.match.params.username
     const currentUserURI = props.location.pathname
 
-    // console.log(props)
+
 
     return(
         <Container>

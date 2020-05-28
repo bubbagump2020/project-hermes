@@ -3,13 +3,20 @@ import { Route, Redirect } from 'react-router-dom'
 import { useAuth } from '../../context/aut'
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-    const isAuthenticated = useAuth()
+    const {authTokens} = useAuth()
+    const loginToken = localStorage.getItem('loginToken')
+    console.log(authTokens)
+    console.log(loginToken)
     return(
         <Route
             {...rest}
             render={props =>
-                isAuthenticated ? (
-                    <Component {...props} />
+                authTokens ? (
+                    loginToken ? (
+                        <Component {...props} />
+                    ) : (
+                        <Redirect to="/" />
+                    )
                 ) : (
                     <Redirect to="/" />
                 )

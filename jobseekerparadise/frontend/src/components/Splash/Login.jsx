@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Jumbotron from 'react-bootstrap/Jumbotron'
 import { ROOT_URL } from '../../TopLevelConstants'
+import { Redirect, withRouter } from 'react-router-dom'
 import { userName, userLogin, userPassword } from '../../redux/actions/userActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuth } from '../../context/aut'
@@ -13,7 +14,9 @@ import { useAuth } from '../../context/aut'
 const Login = (props) => {
 
     const dispatch = useDispatch()
-    const {user} = useSelector(state =>({ user: state.userReducer }))
+    const {user} = useSelector(state =>({ user: state.userReducer.user }))
+    const { loginDetails } = useSelector(state => ({ loginDetails: state.userReducer}))
+    const [isLoggedIn, setLoggedIn] = React.useState(false)
     const { setAuthTokens } = useAuth()
 
     let data = {
@@ -22,23 +25,29 @@ const Login = (props) => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            username: user.username,
-            password: user.password
+            username: loginDetails.username,
+            password: loginDetails.password
         })
     }
 
     // Current implementation of token authentication requires user input (ex. logout button) to flush localStorage of the token
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         const userResponse = await fetch(`${ROOT_URL}/login`, data)
         const userData = await userResponse.json()
         if (userData.success){
             dispatch(userLogin(userData))
-            localStorage.setItem('token', userData.jwt)
-            // setAuthTokens(userData.jwt)
-            props.props.history.push(`/${userData.username}`)
+            const token = userData
+            localStorage.setItem('loginToken', token.jwt)
+            setAuthTokens(token)
+            setLoggedIn(true)
+        } else {
+            console.log(userData.message)
         }
+    }
+
+    if (isLoggedIn){
+        return <Redirect to={`/${user.username}`} />
     }
 
     return(
@@ -62,4 +71,4 @@ const Login = (props) => {
     )
 }
 
-export default Login
+export default withRouter(Login)

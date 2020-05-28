@@ -18,8 +18,10 @@ function App() {
     setAuthTokens(data)
   }
 
+
+
   return (
-    <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+    <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens}}>
       <Router>
         <Route exact path="/" component={SplashPage}/>
         <PrivateRoute exact path="/:username" component={Home} />
