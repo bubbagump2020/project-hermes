@@ -6,7 +6,8 @@ import {
 import PrivateRoute from './components/Splash/PrivateRoute'
 import SplashPage from './components/Splash/SplashPage';
 import Home from './components/User/Home'
-import Profile from './components/User/Profile'
+import {ToastContainer} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { AuthContext } from './context/aut'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route exact path="/" component={SplashPage}/>
         <PrivateRoute exact path="/:username" component={Home} />
       </Router>
+      <ToastContainer />
     </AuthContext.Provider>
   );
 }
