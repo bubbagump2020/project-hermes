@@ -2,15 +2,22 @@ import React from 'react'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import Button from 'react-bootstrap/Button'
-import { useAuth } from '../../context/aut'
+import { Redirect } from 'react-router-dom'
 
 const SiteNavbar = (props) => {
     const path = props.path
 
-    const { setAuthTokens } = useAuth()
+    React.useEffect(() => {
+        const user = localStorage.getItem('user')
+        if (!user){
+           return <Redirect to="/" />
+        }
+    })
 
-    const logOutClick = () => {
-        setAuthTokens(null)
+    const handleLogout = () => {
+        localStorage.removeItem('user')
+        localStorage.removeItem('jwt')
+        window.location.reload(false)
     }
 
     return(
@@ -19,7 +26,7 @@ const SiteNavbar = (props) => {
             <Nav>
                 <Nav.Link href={`${path}/profile`}>User Profile (To be replaced with icon w/dropdown menu)</Nav.Link>
             </Nav>
-            <Button variant="outline-info" onClick={logOutClick}>Logout</Button>
+            <Button variant="outline-info" onClick={handleLogout}>Logout</Button>
         </Navbar>
     )
 }

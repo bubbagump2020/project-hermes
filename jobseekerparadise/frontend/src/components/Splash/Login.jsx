@@ -1,45 +1,57 @@
 import React from 'react'
-import { post, get } from 'axios'
+import { post } from 'axios'
 import { ROOT_URL } from '../../TopLevelConstants'
-import { useHistory } from 'react-router-dom'
+import { useHistory, Redirect } from 'react-router-dom'
+import Jumbotron from 'react-bootstrap/Jumbotron'
+import Form from 'react-bootstrap/Form'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
 
 
 const Login = () => {
 
-    const [user, setUser] = React.useState({
-        username: null,
-        password: null
-    })
-    const history = useHistory()
-    
     const handleSubmit = async (event) => {
         event.preventDefault()
         const request = {
             "auth":{
-                "username": user.username,
-                "password": user.password
+                "username": document.getElementById('login-username').value,
+                "password": document.getElementById('login-password').value
             }
         }
         const response = await post(`${ROOT_URL}/api/user_token`, request)
+        console.log(response)
         localStorage.setItem('jwt', response.data.jwt)
-        localStorage.setItem('user', user.username)
-        history.push(`/${user.username}`)
+        localStorage.setItem('user', document.getElementById('login-username').value)
+        window.location.reload(false)
     }
+
+    const checkForToken = (token) => {
+        const user = localStorage.getItem('user')
+        if (token){
+            return <Redirect to={`/${user}`} />
+        }
+    }
+
     return(
-        <div className="jumbotron">
-            <h2>Login!</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="name">Email: </label>
-                    <input name="name" id="name" type="name" className="form-control" onChange={e => setUser({ ...user, username: e.target.value })}/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input name="password" id="password" type="password" className="form-control" onChange={e => setUser({ ...user, password: e.target.value})}/>
-                </div>
-                <button type="submit" className="btn btn-dark">Submit</button>
-            </form>
-        </div>
+        <Container>
+            {checkForToken(localStorage.getItem('jwt'))}
+            <Jumbotron>
+                <h2>Login</h2>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="login-username">
+                        <Form.Label>Username: </Form.Label>
+                        <Form.Control type="text" placeholder="Username" />
+                    </Form.Group>
+                    <Form.Group controlId="login-password">
+                        <Form.Label>Password: </Form.Label>
+                        <Form.Control type="password" placeholder="Password" />
+                    </Form.Group>
+                    <Button variant="dark" type="submit">Login</Button>
+                </Form>
+            </Jumbotron>
+        </Container>
     )
 }
 
