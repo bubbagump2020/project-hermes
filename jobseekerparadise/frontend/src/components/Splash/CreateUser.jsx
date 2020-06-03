@@ -9,9 +9,11 @@ const CreateUser = (props) => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         const email = document.getElementById('email').value
+        const name = document.getElementById('name').value
         const password = document.getElementById('password').value
         const request = {
             "user": {
+                "name": name,
                 "email": email,
                 "password": password
             }
@@ -24,6 +26,10 @@ const CreateUser = (props) => {
         <div className="jumbotron">
             <h2>Create your Account!</h2>
             <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="name">Username: </label>
+                    <input name="name" id="name" type="name" className="form-control" />
+                </div>
                 <div className="form-group">
                     <label htmlFor="email">Email: </label>
                     <input name="email" id="email" type="email" className="form-control" />

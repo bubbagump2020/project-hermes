@@ -1,29 +1,37 @@
 import React from 'react'
-import { post } from 'axios'
+import { post, get } from 'axios'
 import { ROOT_URL } from '../../TopLevelConstants'
+import { useHistory } from 'react-router-dom'
 
 
-const Login = (props) => {
+const Login = () => {
 
     const [user, setUser] = React.useState({
-        email: null,
+        username: null,
         password: null
     })
-
+    const history = useHistory()
+    
     const handleSubmit = async (event) => {
         event.preventDefault()
-        const request = { "auth": {"email": user.email, "password": user.password}}
+        const request = {
+            "auth":{
+                "username": user.username,
+                "password": user.password
+            }
+        }
         const response = await post(`${ROOT_URL}/api/user_token`, request)
-        console.log(response)
+        localStorage.setItem('jwt', response.data.jwt)
+        localStorage.setItem('user', user.username)
+        history.push(`/${user.username}`)
     }
-
     return(
         <div className="jumbotron">
             <h2>Login!</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="email">Email: </label>
-                    <input name="email" id="email" type="email" className="form-control" onChange={e => setUser({ ...user, email: e.target.value })}/>
+                    <label htmlFor="name">Email: </label>
+                    <input name="name" id="name" type="name" className="form-control" onChange={e => setUser({ ...user, username: e.target.value })}/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">Password</label>
