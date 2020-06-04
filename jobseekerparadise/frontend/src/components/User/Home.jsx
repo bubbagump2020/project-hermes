@@ -1,6 +1,7 @@
 import React from 'react'
 import Container from 'react-bootstrap/Container'
 import SiteNavbar from '../SiteWide/SiteNavbar'
+import SearchBarForm from './SearchBarForm'
 
 const Home = (props) => {
 
@@ -13,7 +14,7 @@ const Home = (props) => {
         <Container>
             <SiteNavbar currentUser={currentUser} path={currentUserURI} />
             <div>
-                Job seekers news component?
+               <SearchBarForm />
             </div>
             <div>
                 Welcome back message component?

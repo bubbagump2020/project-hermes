@@ -14,17 +14,14 @@ const CreateUser = () => {
         checkLoginToken(localStorage.getItem('jwt'))
     })
 
-    const [errorMessages, setErrorMessages] = React.useState([])
     const showErrorMessages = (messages) => {
-        // const message = localStorage.getItem('errorMessages')
-        console.log(messages)
-        // console.log( message)
-        // toast.error(`${message}`, {
-        //     hideProgressBar: true,
-        //     closeOnClick: true,
-        //     position: 'top-left',
-        // })
-        // localStorage.removeItem('errorMessages')
+        messages.map(message => {
+            return toast.error(`${message}`, {
+                hideProgressBar: true,
+                closeOnClick: true,
+                position: 'top-left'
+            })
+        })
     }
 
     const handleSubmit = async (event) => {
@@ -56,14 +53,12 @@ const CreateUser = () => {
                 }
             }
             if (response.status === 200){
-                console.log(response)
-                setErrorMessages(response.data.error)
-                debugger
-                showErrorMessages(errorMessages)
+                const errorArray = response.data.error
+                showErrorMessages(errorArray)
             }
         } catch(err){
             response = err
-            setErrorMessages(response.data.error)
+            showErrorMessages(response.data.error)
         } 
     }
 
@@ -77,7 +72,6 @@ const CreateUser = () => {
 
     return(
         <Container>
-            {/* {showErrorMessages()} */}
             <Jumbotron>
                 <h2>Create your Account!</h2>
                 <Form onSubmit={handleSubmit}>
