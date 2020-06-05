@@ -16,6 +16,7 @@ const SplashPage = (props) => {
                     <Login props={props}/>
                 </Col>
             </Row>
+            <h5 style={{textAlign: "center"}}>Some cool/stock photos about jobs and employment if possible</h5>
             <h6 style={{textAlign: "center"}}>Created By Kevin Bagnall, May 2020</h6>
         </Container>
     )

@@ -1,95 +1,96 @@
 import React from 'react'
+import { post } from 'axios'
+import { ROOT_URL } from '../../TopLevelConstants'
+import { Redirect } from 'react-router-dom'
+import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Jumbotron from 'react-bootstrap/Jumbotron'
-import Alert from 'react-bootstrap/Alert'
-import { ROOT_URL } from '../../TopLevelConstants'
+import { toast } from 'react-toastify'
 
-const CreateUser = (props) => {
+const CreateUser = () => {
 
-    const [newUser, setNewUser] = React.useState({
-        username: null,
-        email: null,
-        password: null
+    React.useEffect(() => {
+        checkLoginToken(localStorage.getItem('jwt'))
     })
 
-    const history = props.props.history
-
-    const handleChange = (e) => {
-        e.preventDefault()
-        switch(e.currentTarget.placeholder){
-            case "Email":
-                setNewUser({ ...newUser, email: e.target.value })
-                break;
-            case "Username":
-                setNewUser({ ...newUser, username: e.target.value })
-                break;
-            default:
-                setNewUser({ ...newUser, password: e.target.value})
-        }
-
-    }
-
-    let data = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            username: newUser.username,
-            email: newUser.email,
-            password: newUser.password
+    const showErrorMessages = (messages) => {
+        messages.map(message => {
+            return toast.error(`${message}`, {
+                hideProgressBar: true,
+                closeOnClick: true,
+                position: 'top-left'
+            })
         })
     }
 
-    const handleErrors = (errors) => {
-        if (errors !== undefined ){
-            return errors.map(warning => {
-                return(
-                    <Alert key={warning} variant="warning">
-                        Sorry that {warning.toLowerCase()}
-                    </Alert>
-                )
-            })
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+        const email = document.getElementById('email').value
+        const username = document.getElementById('username').value
+        const password = document.getElementById('password').value
+        const request = {
+            "user": {
+                "username": username,
+                "email": email,
+                "password": password
+            }
+        }
+        let response = null
+        try {
+            response = await post(`${ROOT_URL}/api/users`, request)
+            if (response.status === 201){
+                const autoLoginResponse = await post(`${ROOT_URL}/api/user_token`,{
+                    "auth": {
+                        "username": username,
+                        "password": password
+                    }
+                })
+                if (autoLoginResponse.status === 201) {
+                    localStorage.setItem('jwt', autoLoginResponse.data.jwt)
+                    localStorage.setItem('user', username)
+                    window.location.reload(false)
+                }
+            }
+            if (response.status === 200){
+                const errorArray = response.data.error
+                showErrorMessages(errorArray)
+            }
+        } catch(err){
+            response = err
+            showErrorMessages(response.data.error)
+        } 
+    }
+
+    const checkLoginToken = (token) => {
+        const user = localStorage.getItem('user')
+        if(token){
+            return <Redirect to={`/${user}`} />
         }
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        const newUserResponse = await fetch(`${ROOT_URL}/users`, data)
-        const newUserData = await newUserResponse.json()
-        setNewUser(newUserData)
-
-        if (newUserData.success) {
-            history.push(`/${newUserData.username}`)
-        }
-    }
 
     return(
-        <Jumbotron>
-            <h2>Join The Family!</h2>
-            {handleErrors(newUser.error)}
-            <Form onSubmit={handleSubmit}>
-                <Form.Text>We're happy to have you!</Form.Text>
-                <br></br>
-                <Form.Group>
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control type="email" placeholder="Email" onChange={handleChange}/>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" placeholder="Username" onChange={handleChange}/>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password" onChange={handleChange}/>
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form><br></br>
-        </Jumbotron>
+        <Container>
+            <Jumbotron>
+                <h2>Create your Account!</h2>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="username">
+                        <Form.Label>Username: </Form.Label>
+                        <Form.Control type="text" placeholder="Username" />
+                    </Form.Group>
+                    <Form.Group controlId="email">
+                        <Form.Label>Email: </Form.Label>
+                        <Form.Control type="email" placeholder="Email"/>
+                    </Form.Group>
+                    <Form.Group controlId="password">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" placeholder="Password"/>
+                    </Form.Group>
+                    <Button type="submit" variant="dark">Submit</Button>
+                </Form>
+            </Jumbotron>
+        </Container>
     )
 }
 

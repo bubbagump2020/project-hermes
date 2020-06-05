@@ -1,73 +1,71 @@
 import React from 'react'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Jumbotron from 'react-bootstrap/Jumbotron'
+import { post } from 'axios'
 import { ROOT_URL } from '../../TopLevelConstants'
-import Alert from 'react-bootstrap/Alert'
-import Toast from 'react-bootstrap/Toast'
+import { Redirect } from 'react-router-dom'
+import Jumbotron from 'react-bootstrap/Jumbotron'
+import Form from 'react-bootstrap/Form'
+import Container from 'react-bootstrap/Container'
+import Button from 'react-bootstrap/Button'
+import {toast} from 'react-toastify'
 
 
-const Login = (props) => {
+const Login = () => {
 
-    const [user, setUser] = React.useState({
-        username: null,
-        password: null,
-        success: null
-    })
-
-    let data = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username: user.username,
-            password: user.password
+    const showErrorMessage = () => {
+        toast.error('Username or password incorrect', {
+            hideProgressBar: true,
+            closeOnClick: true,
+            position: 'top-right',
         })
-    }
+    }    
 
-    const handleChange = (e) => {
-        e.preventDefault()
-        switch(e.currentTarget.placeholder){
-            case "Username":
-                setUser({ ...user, username: e.target.value })
-                break;
-            default:
-                setUser({ ...user, password: e.target.value })
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+        const request = {
+            "auth":{
+                "username": document.getElementById('login-username').value,
+                "password": document.getElementById('login-password').value
+            }
         }
+        let response = null 
+        try{
+            response = await post(`${ROOT_URL}/api/user_token`, request)
+            if (response.status === 201){
+                localStorage.setItem('jwt', response.data.jwt)
+                localStorage.setItem('user', document.getElementById('login-username').value)
+                window.location.reload(false)
+            }
+        } catch (err) {
+            response = err.response
+            showErrorMessage(response)
+        }     
     }
 
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        const userResponse = await fetch(`${ROOT_URL}/login`, data)
-        const userData = await userResponse.json()
-        console.log(userData)
-        if (userData.success){
-            localStorage.setItem('token', userData.jwt)
-            props.props.history.push(`/${userData.user.username}`)
+    const checkForToken = (token) => {
+        const user = localStorage.getItem('user')
+        if (token){
+            return <Redirect to={`/${user}`} />
         }
     }
 
     return(
-        <Jumbotron>
-            <h2>Welcome Back!</h2>
-            <Form onSubmit={handleSubmit}>
-                {/* {handleSuccess(user)} */}
-                <br></br>
-                <Form.Group>
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" placeholder="Username" onChange={handleChange}/>               
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password" onChange={handleChange}/>
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form>
-        </Jumbotron>
+        <Container>
+            {checkForToken(localStorage.getItem('jwt'))}
+            <Jumbotron>
+                <h2>Login</h2>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="login-username">
+                        <Form.Label>Username: </Form.Label>
+                        <Form.Control type="text" placeholder="Username" />
+                    </Form.Group>
+                    <Form.Group controlId="login-password">
+                        <Form.Label>Password: </Form.Label>
+                        <Form.Control type="password" placeholder="Password" />
+                    </Form.Group>
+                    <Button variant="dark" type="submit">Login</Button>
+                </Form>
+            </Jumbotron>
+        </Container>
     )
 }
 
